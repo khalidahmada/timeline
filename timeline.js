@@ -1,5 +1,5 @@
 /**
- * timeline.js v0.11.4
+ * timeline.js v0.11.5
  * (c) 2015 Khalid Ahmada
  * Released under the MIT License.
  */
@@ -63,7 +63,9 @@
                         return;
                     }
                     if (!timeline_helper.exist(id)) {
+
                         throw " Timeline Error : timeline " + id + " is not exist";
+
                         return false;
                     } else {
                         return arraytimeline[id];
@@ -100,7 +102,7 @@
             frames: {}, // farames of timelines
             complete: fn, // callback on timeline
             onrepeat: fn, // Callback on each repeat
-            tick: fn, // each tick 
+            tick: fn, // each tick
             loop: 0, // loop flag number of repeat (-1) loop infiniti
             fps: 35, // frames speed
             step: fn // each steep between frames
@@ -142,6 +144,8 @@
                 if (_ops.complete) {
                     _ops.complete.apply(_this, [_this]);
                 }
+
+
             }
 
             var repeatHnalder = function() {
@@ -166,6 +170,9 @@
                 }
                 // Animate complete global handler
             var _animcomplete = function() {
+                if(_ops.onEnd){
+                  _ops.onEnd();
+                }
 
                 if (_ops.loop == -1) {
                     resettime();
@@ -208,7 +215,7 @@
                     stephandler();
                 }
 
-                // if the frame end 
+                // if the frame end
                 // trigger end
                 if (_cusror > _this.totalduration) {
                     // clear timer and call complete handler
@@ -272,7 +279,7 @@
                 }
             }
 
-            // constractor 
+            // constractor
             init();
         }
 
@@ -282,7 +289,7 @@
             add: function(id, $el, frames, options) {
                 // options test
                 options = options || {};
-                // test if the timeline id is not already exist 
+                // test if the timeline id is not already exist
                 if (timeline_helper.exist(id)) {
                     throw "Timeline Error : " + id + " already exist !";
                     return;
@@ -310,8 +317,11 @@
                     tick: timeline_helper._fn(options.tick),
                     step: timeline_helper._fn(options.step),
                     loop: options.loop || _options.loop,
-                    fps: options.fps || _options.fps
+                    fps: options.fps || _options.fps,
+                    onEnd : options.onEnd || null,
                 });
+
+                console.log(arraytimeline);
             },
             // Play
             play: function(id, frameid) {
@@ -323,14 +333,28 @@
                 }
 
             },
+            stop :function(id){
+              // if the time line is not exist
+              var _timeline = timeline_helper.get.timeline(id);
+
+              if (_timeline) {
+                  _timeline.stop();
+              }
+
+          },
+
             // resume
             resume: function(id) {
+              alert('resume here');
                 // if the time line is not exist
                 var _timeline = timeline_helper.get.timeline(id);
 
                 if (_timeline) {
                     _timeline.resume();
                 }
+            },
+            info :  function(){
+              return arraytimeline;
             }
         }
 
